@@ -9,12 +9,14 @@ Requirements:
 - Helm 3.12 or newer.
 - Git.
 - Optional: chart-testing and Kind for integration tests.
+- Optional: kubeconform and the helm-unittest plugin for the full static suite.
 
 Run the local checks:
 
 ```bash
 helm lint --strict ./charts/app-template
 helm template test ./charts/app-template
+helm unittest ./charts/app-template
 
 for values in examples/*-values.yaml; do
   helm template test ./charts/app-template -f "$values" >/dev/null
@@ -34,4 +36,3 @@ done
 ## Design rule
 
 Prefer native Kubernetes object shapes for advanced fields. Add a convenience abstraction only when it reduces repeated configuration without hiding important Kubernetes behavior.
-
