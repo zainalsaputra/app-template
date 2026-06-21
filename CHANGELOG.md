@@ -4,6 +4,12 @@ All notable changes are documented here. This project follows Semantic Versionin
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-06-21
+
+### Fixed
+
+- Set an explicit numeric non-root user and group for the Helm connection test so Kubernetes can validate the container security context.
+
 ## [0.1.0] - 2026-06-21
 
 ### Added

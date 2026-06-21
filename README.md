@@ -35,7 +35,7 @@ helm install my-app app-template/app-template
 Or from OCI:
 
 ```bash
-helm install my-app oci://ghcr.io/zainalsaputra/charts/app-template --version 0.1.0
+helm install my-app oci://ghcr.io/zainalsaputra/charts/app-template --version 0.1.1
 ```
 
 ## Common examples

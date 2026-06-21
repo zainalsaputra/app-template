@@ -2,7 +2,7 @@ apiVersion: v2
 name: app-template
 description: A reusable, secure-by-default Helm chart for containerized web applications
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "1.27-alpine"
 kubeVersion: ">=1.27.0-0"
 keywords:
@@ -23,5 +23,5 @@ annotations:
   artifacthub.io/category: integration-delivery
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - kind: added
-      description: Initial reusable application chart
+    - kind: fixed
+      description: Use a numeric non-root user for the Helm connection test
