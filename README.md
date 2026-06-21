@@ -1,5 +1,6 @@
 # Helm App Blueprint
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/helm-app-blueprint)](https://artifacthub.io/packages/search?repo=helm-app-blueprint)
 [![Lint and test chart](https://github.com/zainalsaputra/helm-app-blueprint/actions/workflows/lint-test.yaml/badge.svg)](https://github.com/zainalsaputra/helm-app-blueprint/actions/workflows/lint-test.yaml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/zainalsaputra/helm-app-blueprint/badge)](https://securityscorecards.dev/viewer/?uri=github.com/zainalsaputra/helm-app-blueprint)
 [![License](https://img.shields.io/github/license/zainalsaputra/helm-app-blueprint)](LICENSE)
