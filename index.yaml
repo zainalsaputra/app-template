@@ -1,5 +1,49 @@
 apiVersion: v1
 entries:
+  app-blueprint:
+  - annotations:
+      artifacthub.io/alternativeName: helm-app-blueprint
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Rename the chart from app-template to app-blueprint
+        - kind: changed
+          description: Move the project to the helm-app-blueprint repository identity
+        - kind: added
+          description: Document the upgrade path for existing app-template releases
+        - kind: fixed
+          description: Include the canonical Apache License 2.0 text
+      artifacthub.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: 1.27-alpine
+    created: "2026-06-21T18:38:15.136073018Z"
+    description: A reusable, secure-by-default Helm chart for containerized web applications
+    digest: ffd1455601e1c96cbd62781795c724bf962c8624e740396bc0aed953d2fb2c74
+    home: https://github.com/zainalsaputra/helm-app-blueprint
+    icon: https://raw.githubusercontent.com/zainalsaputra/helm-app-blueprint/main/assets/icon.svg
+    keywords:
+    - application
+    - cloud-native
+    - devops
+    - deployment
+    - gitops
+    - helm
+    - helm-chart
+    - kubernetes
+    - web
+    - api
+    kubeVersion: '>=1.27.0-0'
+    maintainers:
+    - email: zainalsaputra@users.noreply.github.com
+      name: Zainal Saputra
+      url: https://github.com/zainalsaputra
+    name: app-blueprint
+    sources:
+    - https://github.com/zainalsaputra/helm-app-blueprint
+    type: application
+    urls:
+    - https://github.com/zainalsaputra/app-template/releases/download/app-blueprint-0.2.0/app-blueprint-0.2.0.tgz
+    version: 0.2.0
   app-template:
   - annotations:
       artifacthub.io/alternativeName: app-template-chart
@@ -104,4 +148,4 @@ entries:
     urls:
     - https://github.com/zainalsaputra/app-template/releases/download/app-template-0.1.0/app-template-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-21T18:16:44.186490751Z"
+generated: "2026-06-21T18:38:15.136084776Z"
