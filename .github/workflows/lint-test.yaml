@@ -43,12 +43,12 @@ jobs:
           KUBECONFORM_VERSION=0.8.0
           curl --fail --show-error --silent --location \
             "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
-            --output kubeconform.tar.gz
+            --output kubeconform-linux-amd64.tar.gz
           curl --fail --show-error --silent --location \
             "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/CHECKSUMS" \
             --output CHECKSUMS
           grep 'kubeconform-linux-amd64.tar.gz$' CHECKSUMS | sha256sum --check
-          tar -xzf kubeconform.tar.gz kubeconform
+          tar -xzf kubeconform-linux-amd64.tar.gz kubeconform
           helm template test ./charts/app-template \
             | ./kubeconform -strict -summary -ignore-missing-schemas
           for values in examples/*-values.yaml; do
