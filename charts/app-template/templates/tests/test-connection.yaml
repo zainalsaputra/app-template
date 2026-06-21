@@ -1,0 +1,34 @@
+{{- if and .Values.tests.enabled .Values.service.enabled }}
+{{- if not (hasKey .Values.service.ports .Values.tests.servicePort) }}
+{{- fail (printf "tests.servicePort references undefined service port %q" .Values.tests.servicePort) }}
+{{- end }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "app-template.fullname" . }}-test-connection
+  labels:
+    {{- include "app-template.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: curl
+      image: {{ .Values.tests.image | quote }}
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+      command:
+        - sh
+        - -ec
+        - curl --fail --silent --show-error --max-time 10 http://{{ include "app-template.fullname" . }}:{{ (index .Values.service.ports .Values.tests.servicePort).port }}{{ .Values.tests.path }}
+{{- end }}

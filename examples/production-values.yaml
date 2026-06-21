@@ -1,0 +1,97 @@
+replicaCount: 3
+
+image:
+  repository: ghcr.io/example/my-api
+  tag: "1.0.0"
+
+configMap:
+  create: true
+  data:
+    NODE_ENV: production
+    LOG_LEVEL: info
+
+secret:
+  existingSecret: my-api-secrets
+
+container:
+  ports:
+    http:
+      containerPort: 3000
+      protocol: TCP
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: http
+  tls:
+    - secretName: api-example-com-tls
+      hosts:
+        - api.example.com
+
+probes:
+  startup:
+    enabled: true
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    enabled: true
+    httpGet:
+      path: /health/ready
+      port: http
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    httpGet:
+      path: /health/live
+      port: http
+    periodSeconds: 20
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
+
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: app-template
+
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 3000
+          protocol: TCP
+  egress:
+    - to:
+        - namespaceSelector: {}
+

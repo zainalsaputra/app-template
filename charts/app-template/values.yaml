@@ -1,0 +1,260 @@
+# replicaCount is the desired number of application pods when autoscaling is disabled.
+replicaCount: 1
+
+# revisionHistoryLimit is the number of old ReplicaSets retained by the Deployment.
+revisionHistoryLimit: 3
+
+# nameOverride replaces the chart name used in generated resource names.
+nameOverride: ""
+# fullnameOverride completely replaces the generated release resource name.
+fullnameOverride: ""
+# appVersionOverride sets app.kubernetes.io/version for the deployed application.
+appVersionOverride: ""
+
+image:
+  # image.repository is the application container image repository.
+  repository: nginxinc/nginx-unprivileged
+  # image.tag is the image tag; when empty, Chart.appVersion is used.
+  tag: "1.27-alpine"
+  # image.digest pins the image by digest and takes precedence over image.tag.
+  digest: ""
+  # image.pullPolicy controls when Kubernetes pulls the image.
+  pullPolicy: IfNotPresent
+
+# imagePullSecrets lists existing registry credential Secret names.
+imagePullSecrets: []
+
+deployment:
+  # deployment.annotations adds annotations to the Deployment.
+  annotations: {}
+  # deployment.strategy configures the Kubernetes Deployment update strategy.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  fsGroup: 101
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  capabilities:
+    drop:
+      - ALL
+
+serviceAccount:
+  # serviceAccount.create controls whether a dedicated ServiceAccount is created.
+  create: true
+  # serviceAccount.automount controls mounting of the Kubernetes API token.
+  automount: false
+  # serviceAccount.annotations adds annotations to the ServiceAccount.
+  annotations: {}
+  # serviceAccount.name uses an existing ServiceAccount when create is false.
+  name: ""
+
+container:
+  # container.command overrides the image ENTRYPOINT.
+  command: []
+  # container.args overrides the image CMD.
+  args: []
+  # container.workingDir overrides the container working directory.
+  workingDir: ""
+  # container.ports defines named container ports.
+  ports:
+    http:
+      containerPort: 8080
+      protocol: TCP
+  # container.lifecycle configures Kubernetes container lifecycle hooks.
+  lifecycle: {}
+
+configMap:
+  # configMap.create creates a ConfigMap from configMap.data.
+  create: false
+  # configMap.name overrides the generated ConfigMap name.
+  name: ""
+  # configMap.data contains non-sensitive environment configuration.
+  data: {}
+
+secret:
+  # secret.create creates a Secret from secret.stringData. Prefer existingSecret in production.
+  create: false
+  # secret.name overrides the generated Secret name.
+  name: ""
+  # secret.existingSecret references an externally managed Secret.
+  existingSecret: ""
+  # secret.stringData contains sensitive values and is stored in Helm release history when used.
+  stringData: {}
+
+# env defines explicit Kubernetes EnvVar objects for the application container.
+env: []
+# envFrom appends explicit Kubernetes EnvFromSource objects.
+envFrom: []
+
+service:
+  # service.enabled controls creation of the application Service.
+  enabled: true
+  # service.type is the Kubernetes Service type.
+  type: ClusterIP
+  # service.annotations adds annotations to the Service.
+  annotations: {}
+  # service.ports defines named Service ports.
+  ports:
+    http:
+      port: 80
+      targetPort: http
+      protocol: TCP
+      appProtocol: http
+
+ingress:
+  # ingress.enabled controls creation of an Ingress.
+  enabled: false
+  # ingress.className selects the IngressClass.
+  className: ""
+  # ingress.annotations adds controller-specific Ingress annotations.
+  annotations: {}
+  # ingress.hosts defines hosts and HTTP paths.
+  hosts:
+    - host: app-template.local
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: http
+  # ingress.tls references existing TLS Secrets.
+  tls: []
+
+probes:
+  startup:
+    enabled: false
+    httpGet:
+      path: /
+      port: http
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    enabled: true
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 2
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+  liveness:
+    enabled: true
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    timeoutSeconds: 2
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
+autoscaling:
+  # autoscaling.enabled controls creation of an autoscaling/v2 HPA.
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: ""
+
+podDisruptionBudget:
+  # podDisruptionBudget.enabled controls creation of a PDB.
+  enabled: false
+  minAvailable: ""
+  maxUnavailable: 1
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+topologySpreadConstraints: []
+
+# initContainers defines additional init containers using native Kubernetes syntax.
+initContainers: []
+# sidecars defines additional application pod containers using native Kubernetes syntax.
+sidecars: []
+# volumes defines additional pod volumes using native Kubernetes syntax.
+volumes: []
+# volumeMounts defines additional mounts for the primary application container.
+volumeMounts: []
+
+persistence:
+  # persistence.enabled creates or mounts persistent storage.
+  enabled: false
+  # persistence.existingClaim mounts an existing PVC instead of creating one.
+  existingClaim: ""
+  # persistence.mountPath is the primary container mount path.
+  mountPath: /data
+  # persistence.subPath optionally mounts only a subdirectory from the volume.
+  subPath: ""
+  # persistence.accessModes defines PVC access modes.
+  accessModes:
+    - ReadWriteOnce
+  # persistence.size is the requested PVC storage size.
+  size: 1Gi
+  # persistence.storageClass selects a StorageClass; empty uses the cluster default.
+  storageClass: ""
+  # persistence.annotations adds annotations to the created PVC.
+  annotations: {}
+
+migration:
+  # migration.enabled creates a pre-install/pre-upgrade migration Job.
+  enabled: false
+  # migration.command overrides the application image ENTRYPOINT.
+  command: []
+  # migration.args defines the migration command arguments.
+  args: []
+  # migration.annotations adds annotations to the Job.
+  annotations: {}
+  # migration.backoffLimit controls failed Job retries.
+  backoffLimit: 3
+  # migration.activeDeadlineSeconds limits total Job runtime.
+  activeDeadlineSeconds: 600
+  # migration.resources configures migration container resources.
+  resources: {}
+  hook:
+    # migration.hook.enabled runs the Job as a Helm lifecycle hook.
+    enabled: true
+    events: pre-install,pre-upgrade
+    weight: "-5"
+    deletePolicy: before-hook-creation,hook-succeeded
+
+networkPolicy:
+  # networkPolicy.enabled controls creation of a NetworkPolicy.
+  enabled: false
+  # networkPolicy.policyTypes defines affected traffic directions.
+  policyTypes:
+    - Ingress
+    - Egress
+  # networkPolicy.ingress contains native NetworkPolicy ingress rules.
+  ingress: []
+  # networkPolicy.egress contains native NetworkPolicy egress rules.
+  egress: []
+
+# extraObjects renders additional Kubernetes objects after evaluating Helm templates in their values.
+extraObjects: []
+
+tests:
+  # tests.enabled controls creation of the Helm test connection Pod.
+  enabled: true
+  # tests.image is the curl image used by the Helm test Pod.
+  image: curlimages/curl:8.12.1
+  # tests.servicePort selects the named Service port used by the connection test and NOTES.
+  servicePort: http
+  # tests.path is the HTTP path requested by the connection test.
+  path: /

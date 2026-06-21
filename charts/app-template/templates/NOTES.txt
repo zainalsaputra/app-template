@@ -1,0 +1,25 @@
+{{- if .Values.ingress.enabled }}
+Application endpoints:
+{{- range .Values.ingress.hosts }}
+  {{- $scheme := "http" }}
+  {{- if $.Values.ingress.tls }}{{ $scheme = "https" }}{{ end }}
+  {{ $scheme }}://{{ .host }}
+{{- end }}
+{{- else if .Values.service.enabled }}
+{{- if not (hasKey .Values.service.ports .Values.tests.servicePort) }}
+{{- fail (printf "tests.servicePort references undefined service port %q" .Values.tests.servicePort) }}
+{{- end }}
+Run the following command to access the application locally:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "app-template.fullname" . }} 8080:{{ (index .Values.service.ports .Values.tests.servicePort).port }}
+
+Then open http://127.0.0.1:8080
+{{- else }}
+The chart was installed without a Service or Ingress.
+{{- end }}
+
+{{- if .Values.secret.create }}
+
+WARNING: secret.create stores secret material in Helm release history.
+Prefer secret.existingSecret with an external secret manager in production.
+{{- end }}

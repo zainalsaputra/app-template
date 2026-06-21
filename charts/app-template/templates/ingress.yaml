@@ -1,0 +1,41 @@
+{{- if .Values.ingress.enabled }}
+{{- if not .Values.service.enabled }}
+{{- fail "ingress.enabled requires service.enabled=true" }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "app-template.fullname" . }}
+  labels:
+    {{- include "app-template.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          {{- if not (hasKey $.Values.service.ports .servicePort) }}
+          {{- fail (printf "ingress path references undefined service port %q" .servicePort) }}
+          {{- end }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "app-template.fullname" $ }}
+                port:
+                  name: {{ .servicePort }}
+          {{- end }}
+    {{- end }}
+{{- end }}
