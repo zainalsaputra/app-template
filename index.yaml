@@ -1,0 +1,35 @@
+apiVersion: v1
+entries:
+  app-template:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial reusable application chart
+      artifacthub.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: 1.27-alpine
+    created: "2026-06-21T20:08:54.9092323+07:00"
+    description: A reusable, secure-by-default Helm chart for containerized web applications
+    digest: 0b3bae4220b69b438fea19bfa3e544bcb1184b062747917279664b51091973ed
+    home: https://github.com/zainalsaputra/app-template
+    icon: https://raw.githubusercontent.com/zainalsaputra/app-template/main/assets/icon.svg
+    keywords:
+    - application
+    - deployment
+    - kubernetes
+    - web
+    - api
+    kubeVersion: '>=1.27.0-0'
+    maintainers:
+    - email: zainalsaputra@users.noreply.github.com
+      name: Zainal Saputra
+      url: https://github.com/zainalsaputra
+    name: app-template
+    sources:
+    - https://github.com/zainalsaputra/app-template
+    type: application
+    urls:
+    - https://github.com/zainalsaputra/app-template/releases/download/app-template-0.1.0/app-template-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-06-21T20:08:54.9071447+07:00"
