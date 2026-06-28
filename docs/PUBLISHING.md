@@ -69,6 +69,8 @@ The `.tgz.prov` file must be present next to the chart package.
 
 Register the GitHub Pages URL as a Helm repository. Artifact Hub returns a repository ID. Copy `artifacthub-repo.yml.example` to the root of the publishing branch as `artifacthub-repo.yml`, then replace the repository ID and owner details.
 
+The `.example` file lives on `main` only as maintainer documentation. Artifact Hub reads the real `artifacthub-repo.yml` from the published `gh-pages` branch to verify repository ownership.
+
 Verified Publisher proves control over the repository. Official status is generally not applicable because this generic chart does not own the applications users deploy.
 
 ## 7. Release checklist

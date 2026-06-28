@@ -18,6 +18,19 @@ The chart starts simple, but exposes production controls without coupling applic
 - No embedded database, registry password, hard-coded certificate issuer, or Argo CD annotation.
 - Tested examples for minimal and production-oriented installations.
 
+## Who is this for?
+
+Use this chart when you want one reusable Helm contract for many containerized web services without copying chart templates between repositories.
+
+It is a good fit for:
+
+- platform teams standardizing how HTTP APIs are deployed;
+- backend teams running many Node.js, Go, Python, PHP, Java, or similar stateless services;
+- GitOps workflows that want application-specific values but shared deployment templates;
+- projects that want secure defaults, schema validation, and signed chart releases without building a chart from scratch.
+
+It is intentionally not a full platform, operator, or framework-specific chart. StatefulSet, DaemonSet, and CronJob controllers are outside the current v0.x scope.
+
 ## Quick start
 
 From a local clone:
@@ -52,11 +65,83 @@ helm template demo ./charts/app-blueprint -f examples/minimal-values.yaml
 # Production controls
 helm template demo ./charts/app-blueprint -f examples/production-values.yaml
 
+# Node.js API
+helm template nodejs-api ./charts/app-blueprint -f examples/nodejs-api-values.yaml
+
 # Externally managed Secret
 helm template demo ./charts/app-blueprint -f examples/existing-secret-values.yaml
 
 # Migration hook
 helm template demo ./charts/app-blueprint -f examples/migration-values.yaml
+```
+
+## Quick recipes
+
+Deploy a simple HTTP API:
+
+```bash
+helm install my-api helm-app-blueprint/app-blueprint \
+  --set nameOverride=my-api \
+  --set image.repository=ghcr.io/example/my-api \
+  --set image.tag=1.0.0 \
+  --set container.ports.http.containerPort=3000
+```
+
+Deploy a Node.js API from the example values:
+
+```bash
+helm install nodejs-api helm-app-blueprint/app-blueprint \
+  -f examples/nodejs-api-values.yaml
+```
+
+Use non-sensitive environment variables:
+
+```yaml
+configMap:
+  create: true
+  data:
+    NODE_ENV: production
+    LOG_LEVEL: info
+```
+
+Reference an externally managed Secret:
+
+```yaml
+secret:
+  existingSecret: my-api-secrets
+```
+
+Enable Ingress:
+
+```yaml
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: http
+```
+
+Enable autoscaling:
+
+```yaml
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+```
+
+Run a migration job before install or upgrade:
+
+```yaml
+migration:
+  enabled: true
+  command: ["npm"]
+  args: ["run", "migration:run"]
 ```
 
 ## Secret handling
@@ -117,6 +202,7 @@ helm verify app-blueprint-0.2.1.tgz --keyring ./helm-app-blueprint.gpg
 helm lint --strict ./charts/app-blueprint
 helm template test ./charts/app-blueprint
 helm template test ./charts/app-blueprint -f examples/production-values.yaml
+helm template nodejs-api ./charts/app-blueprint -f examples/nodejs-api-values.yaml
 helm unittest ./charts/app-blueprint
 ```
 
