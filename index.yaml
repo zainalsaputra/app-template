@@ -14,9 +14,9 @@ entries:
       artifacthub.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 1.27-alpine
-    created: "2026-06-28T13:27:30.42542214Z"
+    created: "2026-06-28T13:32:42.400660208Z"
     description: A reusable, secure-by-default Helm chart for containerized web applications
-    digest: 13e7d79e5ee936ae188cf739a9a812a329c36042d8632760146fde824f919ca6
+    digest: ee829fb53c5370b98a5c45b2af6e7c203e4ab710e1230362b1c9974582d8de1e
     home: https://github.com/zainalsaputra/helm-app-blueprint
     icon: https://raw.githubusercontent.com/zainalsaputra/helm-app-blueprint/main/assets/icon.svg
     keywords:
@@ -189,4 +189,4 @@ entries:
     urls:
     - https://github.com/zainalsaputra/app-template/releases/download/app-template-0.1.0/app-template-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-28T13:27:30.425433717Z"
+generated: "2026-06-28T13:32:42.39909591Z"
